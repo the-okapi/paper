@@ -3,8 +3,8 @@
     let text = $state(getText());
 
     function onkeydown(event: KeyboardEvent) {
+        keydown(event);
         text = getText();
-        keydown(event)
     }
 </script>
 
@@ -13,4 +13,4 @@
     {onkeyup}
 />
 
-<p>{text}</p>
+<p>{@html text}<span style="color: red">|</span></p>
