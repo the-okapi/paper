@@ -36,7 +36,7 @@ function textCodesIncludes(code: string) {
 }
 
 // simplify creating token process
-function nt(value: string, formatting: string[] = ["bold", "italic"]) {
+function nt(value: string, formatting: string[] = ["bold", "italic", "underline"]) {
     return { value, formatting }
 }
 
@@ -82,6 +82,10 @@ export function getText() {
             if (token.formatting.includes("italic")) {
                 before = "<em>" + before;
                 after += "</em>";
+            }
+            if (token.formatting.includes("underline")) {
+                before = "<u>" + before;
+                after += "</u>";
             }
             toReturn += before + token.value + after
         }
