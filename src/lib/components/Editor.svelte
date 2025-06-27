@@ -23,4 +23,13 @@
     {ondblclick}
 />
 
-<p>{text}<span style="color: red; width: 99vw;">|</span></p>
+<pre>{@html text}<span class="cursor">|</span></pre>
+
+<style>
+    pre {
+        font-family: sans-serif;
+    }
+    .cursor {
+        color: red;
+    }
+</style>
