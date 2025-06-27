@@ -6,11 +6,21 @@
         keydown(event);
         text = getText();
     }
+
+    function oncontextmenu(event: Event) {
+        event.preventDefault();
+    }
+    
+    function ondblclick(event: Event) {
+        event.preventDefault();
+    }
 </script>
 
 <svelte:window
     {onkeydown}
     {onkeyup}
+    {oncontextmenu}
+    {ondblclick}
 />
 
-<p>{@html text}<span style="color: red">|</span></p>
+<p>{text}<span style="color: red; width: 99vw;">|</span></p>
