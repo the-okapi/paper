@@ -125,8 +125,8 @@ function nt(value: string, formatting: string[]) {
 	return { value, formatting };
 }
 
-function ftw(formatting: boolean[]) {
-	let toReturn = [];
+function ftw(formatting: boolean[], size: number) {
+	let toReturn = [String(size)];
 	if (formatting[0]) {
 		toReturn.push('bold');
 	}
@@ -140,15 +140,15 @@ function ftw(formatting: boolean[]) {
 }
 
 // function ran when key is pressed down
-export function keydown(event: KeyboardEvent, formatting: boolean[]) {
+export function keydown(event: KeyboardEvent, formatting: boolean[], size: number) {
 	// check if key pressed should be added to the text
 	if (textToAdd.includes(event.key)) {
-		tokens.push(nt(event.key, ftw(formatting)));
+		tokens.push(nt(event.key, ftw(formatting, size)));
 		// check if key pressed has different keycode than value and should be added to the text
 	} else if (textCodesIncludes(event.key)) {
 		// get value to be added to the text
 		const code = textToAddCode.find((symbol) => symbol[0] === event.key) ?? ['', ''];
-		tokens.push(nt(code[1], ftw(formatting)));
+		tokens.push(nt(code[1], ftw(formatting, size)));
 		// check if key pressed is backspace
 	} else if (event.key === 'Backspace') {
 		tokens.pop();
@@ -161,26 +161,22 @@ export function getText() {
 	// iterate through each token
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
-		// check if token has no formatting
-		if (token.formatting.length === 0) {
-			toReturn += token.value;
-		} else {
-			let before = '';
-			let after = '';
-			if (token.formatting.includes('bold')) {
-				before = '<strong>' + before;
-				after += '</strong>';
-			}
-			if (token.formatting.includes('italic')) {
-				before = '<em>' + before;
-				after += '</em>';
-			}
-			if (token.formatting.includes('underline')) {
-				before = '<u>' + before;
-				after += '</u>';
-			}
-			toReturn += before + token.value + after;
+		let before = '<span style="font-size: ' + token.formatting[0] + 'em;">';
+		console.log(before);
+		let after = '</span>';
+		if (token.formatting.includes('bold')) {
+			before = '<strong>' + before;
+			after += '</strong>';
 		}
+		if (token.formatting.includes('italic')) {
+			before = '<em>' + before;
+			after += '</em>';
+		}
+		if (token.formatting.includes('underline')) {
+			before = '<u>' + before;
+			after += '</u>';
+		}
+		toReturn += before + token.value + after;
 	}
 	return toReturn;
 }
