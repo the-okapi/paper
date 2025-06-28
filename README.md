@@ -20,3 +20,4 @@
 - **Simple but modern ui**. Not to complicated or colorful or unrealistic. Potentially default shadcn-svelte
 - Easy to work/**intuitive**
 - Transfer to **word document**
+- **No Crashes**

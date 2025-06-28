@@ -3,9 +3,3 @@
 </script>
 
 <Editor />
-
-<style>
-    :global(body) {
-        margin: 8px;
-    }
-</style>
