@@ -110,7 +110,7 @@
 			</Button>
 		</div>
 		<div class="m-auto text-center">
-			<p class="text-xl font-bold">Paper, but on a computer</p>
+			<h1 class="text-xl font-bold">Paper, but on a computer</h1>
 		</div>
 		<div class="text-right">
 			<Button onclick={toggleMode} variant="outline" size="icon" class="m-1">
@@ -126,7 +126,7 @@
 	</div>
 	<hr />
 	<pre class="m-5">{@html text}<span
-			class="cursor"
+			class="font-bold text-[#00bfff]"
 			class:italic={formatting[1]}
 			style="font-size: {size / 10}em;">|</span
 		></pre>
@@ -134,10 +134,9 @@
 
 <style>
 	pre {
-		font-family: sans-serif;
+		font-family: system-ui;
 	}
-	.cursor {
-		color: #00bfff;
-		font-weight: bold;
+	h1 {
+		font-family: system-ui;
 	}
 </style>

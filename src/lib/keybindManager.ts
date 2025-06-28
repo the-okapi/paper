@@ -61,6 +61,7 @@ const textToAdd: string[] = [
 	'7',
 	'8',
 	'9',
+	'0',
 	'!',
 	'@',
 	'#',
@@ -89,7 +90,10 @@ const textToAdd: string[] = [
 	'>',
 	'/',
 	'?',
-	' '
+	' ',
+	'=',
+	'_',
+	'~'
 ];
 
 // character with keycodes that are different than their values to can be added to the text
