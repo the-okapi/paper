@@ -161,17 +161,36 @@ export function keydown(event: KeyboardEvent, formatting: boolean[], size: numbe
 		tokensList.splice(tokensList.length + cursorPosition, 0, nt(code[1], ftw(formatting, size)));
 		// check if key pressed is backspace
 	} else if (event.key === 'Backspace') {
-		tokensList.splice(tokensList.length + cursorPosition - 1, 1);
+		if (tokensList.length + cursorPosition !== 0) {
+			tokensList.splice(tokensList.length + cursorPosition - 1, 1);
+		}
 	}
+}
+
+let italicClass = '';
+let fontSize = '1';
+
+export function setFontSize(newSize: number) {
+	fontSize = String(newSize);
+}
+
+export function toggleItalic() {
+	if (italicClass === 'italic') italicClass = '';
+	else italicClass = 'italic';
 }
 
 // return value of text
 export function getText() {
+	const position = tokensList.length + cursorPosition;
 	const tokens = tokensList.toSpliced(
-		tokensList.length + cursorPosition,
+		position,
 		0,
 		nt(
-			'<span class="font-bold text-[#00bfff]" class:italic={formatting[1]} style="font-size: {size / 10}em;">|</span>',
+			'<span class="font-bold text-[#00bfff] ' +
+				italicClass +
+				'" style="font-size: ' +
+				fontSize +
+				'em;">|</span>',
 			['cursor']
 		)
 	);

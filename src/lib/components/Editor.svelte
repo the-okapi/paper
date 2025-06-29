@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { keydown, getText } from '$lib/keybindManager';
+	import { keydown, getText, toggleItalic, setFontSize } from '$lib/keybindManager';
 	import { Button } from '$lib/components/ui/button/index';
 	import { toggleMode } from 'mode-watcher';
 	import SunIcon from '@lucide/svelte/icons/sun';
@@ -46,6 +46,8 @@
 			iVariant = 'default';
 			formatting[1] = true;
 		}
+		toggleItalic();
+		text = getText();
 	}
 
 	function uClick() {
@@ -81,10 +83,14 @@
 
 	function textBigger() {
 		size += 1;
+		setFontSize($state.snapshot(size / 10));
+		text = getText();
 	}
 
 	function textSmaller() {
 		if (size > 1) size -= 1;
+		setFontSize($state.snapshot(size / 10));
+		text = getText();
 	}
 </script>
 
@@ -110,7 +116,7 @@
 			</Button>
 		</div>
 		<div class="m-auto text-center">
-			<h1 class="text-xl font-bold">Paper, but on a computer</h1>
+			<h1 class="text-xl font-bold">Repaper</h1>
 		</div>
 		<div class="text-right">
 			<Button onclick={toggleMode} variant="outline" size="icon" class="m-1">
