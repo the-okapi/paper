@@ -110,7 +110,9 @@ type Token = {
 };
 
 // list of tokens
-let tokens: Token[] = [];
+let tokensList: Token[] = [];
+
+let cursorPosition = 0;
 
 // check if character has different value than keycode
 function textCodesIncludes(code: string) {
@@ -146,27 +148,38 @@ function ftw(formatting: boolean[], size: number) {
 // function ran when key is pressed down
 export function keydown(event: KeyboardEvent, formatting: boolean[], size: number) {
 	// check if key pressed should be added to the text
-	if (textToAdd.includes(event.key)) {
-		tokens.push(nt(event.key, ftw(formatting, size)));
+	if (event.key === 'ArrowLeft') {
+		if (tokensList.length > Math.abs(cursorPosition)) cursorPosition -= 1;
+	} else if (event.key === 'ArrowRight') {
+		if (cursorPosition < 0) cursorPosition += 1;
+	} else if (textToAdd.includes(event.key)) {
+		tokensList.splice(tokensList.length + cursorPosition, 0, nt(event.key, ftw(formatting, size)));
 		// check if key pressed has different keycode than value and should be added to the text
 	} else if (textCodesIncludes(event.key)) {
 		// get value to be added to the text
 		const code = textToAddCode.find((symbol) => symbol[0] === event.key) ?? ['', ''];
-		tokens.push(nt(code[1], ftw(formatting, size)));
+		tokensList.splice(tokensList.length + cursorPosition, 0, nt(code[1], ftw(formatting, size)));
 		// check if key pressed is backspace
 	} else if (event.key === 'Backspace') {
-		tokens.pop();
+		tokensList.splice(tokensList.length + cursorPosition - 1, 1);
 	}
 }
 
 // return value of text
 export function getText() {
+	const tokens = tokensList.toSpliced(
+		tokensList.length + cursorPosition,
+		0,
+		nt(
+			'<span class="font-bold text-[#00bfff]" class:italic={formatting[1]} style="font-size: {size / 10}em;">|</span>',
+			['cursor']
+		)
+	);
 	let toReturn = '';
 	// iterate through each token
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		let before = '<span style="font-size: ' + token.formatting[0] + 'em;">';
-		console.log(before);
 		let after = '</span>';
 		if (token.formatting.includes('bold')) {
 			before = '<strong>' + before;
@@ -180,7 +193,11 @@ export function getText() {
 			before = '<u>' + before;
 			after += '</u>';
 		}
-		toReturn += before + token.value + after;
+		if (token.formatting[0] !== 'cursor') {
+			toReturn += before + token.value + after;
+		} else {
+			toReturn += token.value;
+		}
 	}
 	return toReturn;
 }

@@ -125,11 +125,7 @@
 		</div>
 	</div>
 	<hr />
-	<pre class="m-5">{@html text}<span
-			class="font-bold text-[#00bfff]"
-			class:italic={formatting[1]}
-			style="font-size: {size / 10}em;">|</span
-		></pre>
+	<pre class="m-5">{@html text}</pre>
 </main>
 
 <style>
