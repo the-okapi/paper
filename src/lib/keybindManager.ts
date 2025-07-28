@@ -114,6 +114,10 @@ let tokensList: Token[] = [];
 
 let cursorPosition = 0;
 
+function findLastLineCursorPosition() {}
+
+function findNextLineCursorPosition() {}
+
 // check if character has different value than keycode
 function textCodesIncludes(code: string) {
 	// iterate through each item that has a different keycode than value
@@ -127,10 +131,12 @@ function textCodesIncludes(code: string) {
 }
 
 // simplify creating token process
+// nt stands for new token
 function nt(value: string, formatting: string[]) {
 	return { value, formatting };
 }
 
+// ftw stands for formatting to words
 function ftw(formatting: boolean[], size: number) {
 	let toReturn = [String(size)];
 	if (formatting[0]) {
@@ -180,20 +186,25 @@ export function toggleItalic() {
 }
 
 // return value of text
-export function getText() {
+export function getText(cursor: boolean) {
 	const position = tokensList.length + cursorPosition;
-	const tokens = tokensList.toSpliced(
-		position,
-		0,
-		nt(
-			'<span class="font-bold text-[#00bfff] ' +
-				italicClass +
-				'" style="font-size: ' +
-				fontSize +
-				'em;">|</span>',
-			['cursor']
-		)
-	);
+	let tokens;
+	if (cursor) {
+		tokens = tokensList.toSpliced(
+			position,
+			0,
+			nt(
+				'<span class="font-bold text-[#00bfff] ' +
+					italicClass +
+					'" style="font-size: ' +
+					fontSize +
+					'em;">|</span>',
+				['cursor']
+			)
+		);
+	} else {
+		tokens = tokensList;
+	}
 	let toReturn = '';
 	// iterate through each token
 	for (let i = 0; i < tokens.length; i++) {
@@ -219,4 +230,12 @@ export function getText() {
 		}
 	}
 	return toReturn;
+}
+
+function getTokensText() {
+	return JSON.stringify(tokensList);
+}
+
+function setTokens(to: string) {
+	tokensList = JSON.parse(to);
 }

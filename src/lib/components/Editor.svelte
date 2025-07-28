@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { keydown, getText, toggleItalic, setFontSize } from '$lib/keybindManager';
-	import { Button } from '$lib/components/ui/button/index';
+	import { Button } from '$lib/components';
 	import { toggleMode } from 'mode-watcher';
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
@@ -10,7 +10,7 @@
 	import BiggerIcon from '@lucide/svelte/icons/a-arrow-up';
 	import SmallerIcon from '@lucide/svelte/icons/a-arrow-down';
 
-	let text = $state(getText());
+	let text = $state(getText(true));
 
 	let modifierPressed = false;
 
@@ -47,7 +47,7 @@
 			formatting[1] = true;
 		}
 		toggleItalic();
-		text = getText();
+		text = getText(true);
 	}
 
 	function uClick() {
@@ -70,7 +70,7 @@
 			else if (key === 'i') iClick();
 		} else {
 			keydown(event, $state.snapshot(formatting), $state.snapshot(size) / 10);
-			text = getText();
+			text = getText(true);
 		}
 		event.preventDefault();
 	}
@@ -84,13 +84,13 @@
 	function textBigger() {
 		size += 1;
 		setFontSize($state.snapshot(size / 10));
-		text = getText();
+		text = getText(true);
 	}
 
 	function textSmaller() {
 		if (size > 1) size -= 1;
 		setFontSize($state.snapshot(size / 10));
-		text = getText();
+		text = getText(true);
 	}
 </script>
 
@@ -131,12 +131,14 @@
 		</div>
 	</div>
 	<hr />
-	<pre class="m-5">{@html text}</pre>
+	<div class="prewrap m-5">{@html text}</div>
 </main>
 
 <style>
-	pre {
+	.prewrap {
 		font-family: system-ui;
+		max-width: calc(100vw - 2.5rem);
+		white-space: normal;
 	}
 	h1 {
 		font-family: system-ui;
