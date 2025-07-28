@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
     import { Input, Label, Button } from '$lib/components';
 
     let fileCode = $state('');
 
     function onsubmit(event: Event) {
         event.preventDefault()
+        goto(`/${fileCode}`);
     }
 </script>
 
