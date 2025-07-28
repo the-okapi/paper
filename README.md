@@ -1,6 +1,6 @@
 # Paper (but on a computer) ![Paper (but on a computer ) icon](./static/favicon.svg)
 
-## Features
+## Ideas (maybe)
 
 - use **custom keypress events** to prevent copy and paste
 - Have **assignment system** like teams for teachers
