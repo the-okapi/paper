@@ -7,7 +7,7 @@
 		setTokens,
 		getTokensText
 	} from '$lib/keybindManager';
-	import { Button, AlertDialog } from '$lib/components';
+	import { Button, AlertDialog, Dialog } from '$lib/components';
 	import { toggleMode } from 'mode-watcher';
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
@@ -165,6 +165,22 @@
 
 <svelte:window {onkeydown} {onkeyup} />
 
+<AlertDialog.Root bind:open={deleteAlertOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you absolutely sure you want to delete this file?</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently delete this file from our servers. No
+				one will be able to access this file after you click continue.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={deleteFile}>Continue</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
 <main>
 	<div class="m-4 grid grid-cols-3">
 		<div class="text-left">
@@ -184,23 +200,6 @@
 				<Button class="m-1" onclick={uClick} variant={uVariant} size="icon" title="Underline">
 					<UnderlineIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
-				<AlertDialog.Root bind:open={deleteAlertOpen}>
-					<AlertDialog.Content>
-						<AlertDialog.Header>
-							<AlertDialog.Title
-								>Are you absolutely sure you want to delete this file?</AlertDialog.Title
-							>
-							<AlertDialog.Description>
-								This action cannot be undone. This will permanently delete this file from our
-								servers. You will not be able to access this file after continuing.
-							</AlertDialog.Description>
-						</AlertDialog.Header>
-						<AlertDialog.Footer>
-							<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-							<AlertDialog.Action onclick={deleteFile}>Continue</AlertDialog.Action>
-						</AlertDialog.Footer>
-					</AlertDialog.Content>
-				</AlertDialog.Root>
 			{/if}
 		</div>
 		<div class="m-auto text-center">
