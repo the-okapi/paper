@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Input, Label, Button } from '$lib/components';
-	import { getFile } from '$lib/pocketbase';
+	import { getFile, pb } from '$lib/pocketbase';
 	import type { Result } from '$lib/pocketbase';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
@@ -14,15 +14,12 @@
 	let loading = $state(false);
 	let disabled = $state(false);
 
-	async function onsubmit(event: Event) {
-		event.preventDefault();
-		// lower case file name
-		const lcfc = fileCode.toLowerCase();
+	async function signIn(lcfc: string, auth: boolean) {
 		disabled = true;
 		errorText = '';
 		loading = true;
-		localStorage.clear();
-		let result: Result = await getFile(lcfc, filePassword);
+		if (auth) localStorage.clear();
+		let result: Result = await getFile(lcfc, filePassword, auth);
 		if (result.success) {
 			localStorage.setItem(lcfc, result.value);
 			localStorage.setItem(`${lcfc}Name`, result.name);
@@ -38,11 +35,20 @@
 			disabled = false;
 		}
 	}
+
+	async function onsubmit(event: Event) {
+		event.preventDefault();
+		// lower case file name
+		const lcfc = fileCode.toLowerCase();
+		signIn(lcfc, true);
+	}
 	onMount(() => {
 		if (page.url.searchParams.getAll('invalid').length === 1) {
 			errorText = 'File not found.';
 		} else if (page.url.searchParams.getAll('deleted').length === 1) {
 			errorText = 'File deleted successfully.';
+		} else if (page.url.searchParams.getAll('reload').length === 1 && pb.authStore.isValid) {
+			signIn(pb.authStore.record?.username, false);
 		} else {
 			const error = page.url.searchParams.getAll('error');
 			if (error.length > 0) {
@@ -54,31 +60,33 @@
 
 <h1 class="mt-[11.5%] text-center text-[4em] font-black select-none">Repaper</h1>
 
-<form {onsubmit} class="m-auto mt-[7%] block w-fit align-middle">
-	<Label for="fileCode" class="ml-0.5 text-lg font-bold {disabled ? 'text-neutral-600' : ''}"
-		>File Code & Password:</Label
-	>
-	<Input
-		required
-		id="fileCode"
-		bind:value={fileCode}
-		type="text"
-		class="mt-1 mb-2 w-[24rem] disabled:cursor-default"
-		placeholder="File Code"
-		{disabled}
-	/>
-	<div class="mt-1.5 flex">
+{#if !loading}
+	<form {onsubmit} class="m-auto mt-[7%] block w-fit align-middle">
+		<Label for="fileCode" class="ml-0.5 text-lg font-bold {disabled ? 'text-neutral-600' : ''}"
+			>File Code & Password:</Label
+		>
 		<Input
 			required
-			class="disabled:cursor-default"
-			bind:value={filePassword}
+			id="fileCode"
+			bind:value={fileCode}
+			type="text"
+			class="mt-1 mb-2 w-[24rem] disabled:cursor-default"
+			placeholder="File Code"
 			{disabled}
-			type="password"
-			placeholder="File Password"
 		/>
-		<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
-	</div>
-</form>
+		<div class="mt-1.5 flex">
+			<Input
+				required
+				class="disabled:cursor-default"
+				bind:value={filePassword}
+				{disabled}
+				type="password"
+				placeholder="File Password"
+			/>
+			<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
+		</div>
+	</form>
+{/if}
 <p class="text-center font-bold text-red-500">{errorText}</p>
 {#if loading}<p class="text-center font-bold text-[#00bfff]">Loading...</p>{/if}
 

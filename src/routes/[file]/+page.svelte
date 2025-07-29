@@ -7,7 +7,7 @@
 		setTokens,
 		getTokensText
 	} from '$lib/keybindManager';
-	import { Button, AlertDialog, Dialog } from '$lib/components';
+	import { Button, AlertDialog, Input } from '$lib/components';
 	import { toggleMode } from 'mode-watcher';
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
@@ -18,19 +18,26 @@
 	import SmallerIcon from '@lucide/svelte/icons/a-arrow-down';
 	import SaveIcon from '@lucide/svelte/icons/save';
 	import DeleteIcon from '@lucide/svelte/icons/trash-2';
+	import RenameIcon from '@lucide/svelte/icons/square-pen';
+	import ReloadIcon from '@lucide/svelte/icons/rotate-cw';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { pb, deleteFilePB, saveFile } from '$lib/pocketbase';
+	import { pb, deleteFilePB, saveFile, renameFilePB } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 
 	let editor = $state(false);
 
 	let deleteAlertOpen = $state(false);
+	let renameDialogOpen = $state(false);
+
+	let file: string;
 
 	let text = $state(getText(false));
 	let name = $state('Loading...');
 	let saveText = $state('');
 	let errorText = $state('');
+
+	let renameValue = $state('');
 
 	let modifierPressed = false;
 
@@ -73,7 +80,7 @@
 	}
 
 	function onkeydown(event: KeyboardEvent) {
-		if (editor) {
+		if (editor && !renameDialogOpen) {
 			if (event.key === 'Meta') {
 				modifierPressed = true;
 			} else if (modifierPressed) {
@@ -87,7 +94,7 @@
 				text = getText($state.snapshot(editor));
 			}
 		}
-		event.preventDefault();
+		if (!renameDialogOpen) event.preventDefault();
 	}
 
 	function onkeyup(event: KeyboardEvent) {
@@ -110,26 +117,6 @@
 		text = getText($state.snapshot(editor));
 	}
 
-	onMount(() => {
-		let text = localStorage.getItem(page.params.file ?? '');
-		if (text) {
-			name = localStorage.getItem(`${page.params.file}Name`) ?? '';
-			setTokens(text);
-			if (pb.authStore.record?.editor) {
-				editor = true;
-				text = getText(true);
-				textBigger();
-				textSmaller();
-			} else {
-				text = getText(false);
-				textBigger();
-				textSmaller();
-			}
-		} else {
-			goto('/?invalid');
-		}
-	});
-
 	function deleteButton() {
 		deleteAlertOpen = true;
 	}
@@ -149,18 +136,59 @@
 	async function save() {
 		errorText = '';
 		saveText = 'Saving...';
-		const result = await saveFile(
-			getTokensText(),
-			localStorage.getItem(`${page.params.file}File`) ?? ''
-		);
+		const result = await saveFile(getTokensText(), file);
 		if (result.success) {
 			saveText = 'Saved';
 			window.setTimeout(() => (saveText = ''), 3000);
+			reloadButton();
 		} else {
 			saveText = '';
 			errorText = result.error;
 		}
 	}
+
+	async function renameFile() {
+		const result = await renameFilePB(renameValue, file);
+		if (result.success) {
+			name = renameValue;
+			saveText = 'File Renamed';
+			window.setTimeout(() => (saveText = ''), 3000);
+			reloadButton();
+		} else {
+			errorText = result.error;
+		}
+		renameDialogOpen = false;
+		renameValue = '';
+	}
+
+	function renameButton() {
+		renameDialogOpen = true;
+	}
+
+	function reloadButton() {
+		goto('/?reload');
+	}
+
+	onMount(() => {
+		let text = localStorage.getItem(page.params.file ?? '');
+		if (text) {
+			setTokens(text);
+			name = localStorage.getItem(`${page.params.file}Name`) ?? '';
+			file = localStorage.getItem(`${page.params.file}File`) ?? '';
+			if (pb.authStore.record?.editor) {
+				editor = true;
+				text = getText(true);
+				textBigger();
+				textSmaller();
+			} else {
+				text = getText(false);
+				textBigger();
+				textSmaller();
+			}
+		} else {
+			goto('/?invalid');
+		}
+	});
 </script>
 
 <svelte:window {onkeydown} {onkeyup} />
@@ -177,6 +205,28 @@
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 			<AlertDialog.Action onclick={deleteFile}>Continue</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={renameDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Rename File</AlertDialog.Title>
+			<AlertDialog.Description
+				>Rename this file. Continue when you're ready.</AlertDialog.Description
+			>
+		</AlertDialog.Header>
+		<Input
+			id="renameInput"
+			class="h-10 text-sm"
+			type="text"
+			placeholder={name}
+			bind:value={renameValue}
+		/>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={renameFile}>Continue</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
@@ -209,13 +259,19 @@
 			{#if editor}
 				<span class="mr-3 text-red-500">{errorText}</span>
 				<span class="mr-3">{saveText}</span>
-				<Button class="m-1" size="icon" onclick={save} title="Save">
+				<Button class="m-1" size="icon" onclick={save} title="Save File">
 					<SaveIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
-				<Button class="m-1" size="icon" onclick={deleteButton} title="Delete">
+				<Button class="m-1" size="icon" onclick={renameButton} title="Rename File">
+					<RenameIcon class="h-[1.2rem] w-[1.2rem]" />
+				</Button>
+				<Button class="m-1" size="icon" onclick={deleteButton} title="Delete File">
 					<DeleteIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			{/if}
+			<Button onclick={reloadButton} size="icon" class="m-1" title="Reload File">
+				<ReloadIcon class="h-[1.2rem] w-[1.2rem]" />
+			</Button>
 			<Button onclick={toggleMode} variant="outline" size="icon" class="m-1">
 				<SunIcon
 					class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
