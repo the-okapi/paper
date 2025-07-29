@@ -101,7 +101,7 @@
 	}
 
 	onMount(() => {
-		let text = localStorage.getItem(page.params.file);
+		let text = localStorage.getItem(page.params.file ?? '');
 		if (text) {
 			name = localStorage.getItem(`${page.params.file}Name`) ?? '';
 			setTokens(text);
