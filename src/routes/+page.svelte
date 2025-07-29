@@ -3,6 +3,8 @@
 	import { Input, Label, Button } from '$lib/components';
 	import { getFile } from '$lib/pocketbase';
 	import type { Result } from '$lib/pocketbase';
+	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 
 	let fileCode = $state('');
 	let filePassword = $state('');
@@ -14,27 +16,46 @@
 
 	async function onsubmit(event: Event) {
 		event.preventDefault();
-		const lowerCaseFileCode = fileCode.toLowerCase();
+		// lower case file name
+		const lcfc = fileCode.toLowerCase();
 		disabled = true;
 		errorText = '';
 		loading = true;
 		localStorage.clear();
-		let result: Result = await getFile(lowerCaseFileCode, filePassword);
+		let result: Result = await getFile(lcfc, filePassword);
 		if (result.success) {
-			localStorage.setItem(lowerCaseFileCode, result.value);
-			localStorage.setItem(`${lowerCaseFileCode}Name`, result.name);
-			goto(`/${lowerCaseFileCode}`);
+			localStorage.setItem(lcfc, result.value);
+			localStorage.setItem(`${lcfc}Name`, result.name);
+			localStorage.setItem(`${lcfc}File`, result.file);
+			goto(`/${lcfc}`);
 		} else {
 			loading = false;
 			if (result.value === 'Failed to authenticate.') {
 				errorText = 'Invalid username or password.';
 			} else {
-				errorText = result.value;
+				errorText = 'Error: ' + result.value;
 			}
 			disabled = false;
 		}
 	}
+	onMount(() => {
+		if (page.url.searchParams.getAll('invalid').length === 1) {
+			errorText = 'File not found.';
+		} else if (page.url.searchParams.getAll('deleted').length === 1) {
+			errorText = 'File deleted successfully.';
+		} else {
+			const error = page.url.searchParams.getAll('error');
+			if (error.length > 0) {
+				errorText = 'Error: ' + error[0];
+			}
+		}
+	});
+	function gotoUrl(event: Event) {
+		goto('/');
+	}
 </script>
+
+<svelte:window onbeforeunload={gotoUrl} />
 
 <h1 class="mt-[11.5%] text-center text-[4em] font-black select-none">Repaper</h1>
 
@@ -62,9 +83,9 @@
 		/>
 		<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
 	</div>
-	<p class="text-center text-red-500">{errorText}</p>
-	{#if loading}<p class="text-center font-bold text-[#00bfff]">Loading...</p>{/if}
 </form>
+<p class="text-center text-red-500">{errorText}</p>
+{#if loading}<p class="text-center font-bold text-[#00bfff]">Loading...</p>{/if}
 
 <style>
 	h1 {

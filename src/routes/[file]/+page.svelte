@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { keydown, getText, toggleItalic, setFontSize, setTokens } from '$lib/keybindManager';
-	import { Button } from '$lib/components';
+	import { Button, AlertDialog } from '$lib/components';
 	import { toggleMode } from 'mode-watcher';
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
@@ -9,11 +9,16 @@
 	import UnderlineIcon from '@lucide/svelte/icons/underline';
 	import BiggerIcon from '@lucide/svelte/icons/a-arrow-up';
 	import SmallerIcon from '@lucide/svelte/icons/a-arrow-down';
+	import SaveIcon from '@lucide/svelte/icons/save';
+	import DeleteIcon from '@lucide/svelte/icons/trash-2';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { pb } from '$lib/pocketbase';
+	import { pb, deleteFilePB } from '$lib/pocketbase';
+	import { goto } from '$app/navigation';
 
 	let editor = $state(false);
+
+	let deleteAlertOpen = $state(false);
 
 	let text = $state(getText(false));
 	let name = $state('Loading...');
@@ -110,8 +115,28 @@
 				textBigger();
 				textSmaller();
 			}
+		} else {
+			goto('/?invalid');
 		}
 	});
+
+	function save() {}
+
+	function deleteButton() {
+		deleteAlertOpen = true;
+	}
+
+	async function deleteFile() {
+		const result = await deleteFilePB(localStorage.getItem(`${page.params.file}File`) ?? '');
+		if (result.success) {
+			pb.authStore.clear();
+			localStorage.clear();
+			deleteAlertOpen = false;
+			goto('/?deleted');
+		} else {
+			goto(`/?error=${result.error}`);
+		}
+	}
 </script>
 
 <svelte:window {onkeydown} {onkeyup} />
@@ -135,12 +160,37 @@
 				<Button class="m-1" onclick={uClick} variant={uVariant} size="icon" title="Underline">
 					<UnderlineIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
+				<AlertDialog.Root bind:open={deleteAlertOpen}>
+					<AlertDialog.Content>
+						<AlertDialog.Header>
+							<AlertDialog.Title
+								>Are you absolutely sure you want to delete this file?</AlertDialog.Title
+							>
+							<AlertDialog.Description>
+								This action cannot be undone. This will permanently delete this file from our
+								servers. You will not be able to access this file after continuing.
+							</AlertDialog.Description>
+						</AlertDialog.Header>
+						<AlertDialog.Footer>
+							<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+							<AlertDialog.Action onclick={deleteFile}>Continue</AlertDialog.Action>
+						</AlertDialog.Footer>
+					</AlertDialog.Content>
+				</AlertDialog.Root>
 			{/if}
 		</div>
 		<div class="m-auto text-center">
-			<h1 class="text-xl font-bold">{name}</h1>
+			<h1 class="text-[1.8rem] font-bold">{name}</h1>
 		</div>
 		<div class="text-right">
+			{#if editor}
+				<Button class="m-1" size="icon" onclick={save} title="Save">
+					<SaveIcon class="h-[1.2rem] w-[1.2rem]" />
+				</Button>
+				<Button class="m-1" size="icon" onclick={deleteButton} title="Delete">
+					<DeleteIcon class="h-[1.2rem] w-[1.2rem]" />
+				</Button>
+			{/if}
 			<Button onclick={toggleMode} variant="outline" size="icon" class="m-1">
 				<SunIcon
 					class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
