@@ -71,8 +71,8 @@
 				keydown(event, $state.snapshot(formatting), $state.snapshot(size) / 10);
 				text = getText($state.snapshot(editor));
 			}
-			event.preventDefault();
 		}
+		event.preventDefault();
 	}
 
 	function onkeyup(event: KeyboardEvent) {
@@ -95,16 +95,20 @@
 		text = getText($state.snapshot(editor));
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		let text = localStorage.getItem(page.params.file);
 		if (text) {
 			name = localStorage.getItem(`${page.params.file}Name`) ?? '';
 			setTokens(text);
-			if (await pb.authStore.record?.editor) {
+			if (pb.authStore.record?.editor) {
 				editor = true;
 				text = getText(true);
+				textBigger();
+				textSmaller();
 			} else {
 				text = getText(false);
+				textBigger();
+				textSmaller();
 			}
 		}
 	});

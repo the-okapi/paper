@@ -18,6 +18,7 @@
 		disabled = true;
 		errorText = '';
 		loading = true;
+		localStorage.clear();
 		let result: Result = await getFile(lowerCaseFileCode, filePassword);
 		if (result.success) {
 			localStorage.setItem(lowerCaseFileCode, result.value);
@@ -46,7 +47,7 @@
 		id="fileCode"
 		bind:value={fileCode}
 		type="text"
-		class="mt-0 w-[24rem] disabled:cursor-default"
+		class="mt-1 mb-2 w-[24rem] disabled:cursor-default"
 		placeholder="File Code"
 		{disabled}
 	/>
