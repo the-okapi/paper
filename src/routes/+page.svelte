@@ -50,12 +50,7 @@
 			}
 		}
 	});
-	function gotoUrl(event: Event) {
-		goto('/');
-	}
 </script>
-
-<svelte:window onbeforeunload={gotoUrl} />
 
 <h1 class="mt-[11.5%] text-center text-[4em] font-black select-none">Repaper</h1>
 
@@ -84,7 +79,7 @@
 		<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
 	</div>
 </form>
-<p class="text-center text-red-500">{errorText}</p>
+<p class="text-center text-red-500 font-bold">{errorText}</p>
 {#if loading}<p class="text-center font-bold text-[#00bfff]">Loading...</p>{/if}
 
 <style>

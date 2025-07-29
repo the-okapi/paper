@@ -10,5 +10,5 @@
 
 <svelte:window ondblclick={preventDefault} oncontextmenu={preventDefault} />
 
-<ModeWatcher />
+<ModeWatcher track={true} />
 {@render children()}
