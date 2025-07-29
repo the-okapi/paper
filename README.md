@@ -2,7 +2,7 @@
 
 Repaper is a word processing website aimed to **prevent AI cheating** in writing
 
-## Potential Ideas 
+## Potential Ideas
 
 - **Highlighting** in multiple colors
 - A few **different fonts** for different styles
