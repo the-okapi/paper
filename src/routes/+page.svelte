@@ -1,28 +1,37 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Input, Label, Button } from '$lib/components';
-	import { ALPHABET } from '$lib/utils';
+	import { getFile } from '$lib/pocketbase';
+	import type { Result } from '$lib/pocketbase';
 
 	let fileCode = $state('');
 	let filePassword = $state('');
+
 	let errorText = $state('');
 
 	let loading = $state(false);
 	let disabled = $state(false);
 
-	function onsubmit(event: Event) {
+	async function onsubmit(event: Event) {
 		event.preventDefault();
-		let lowerCase = fileCode.toLowerCase();
-		for (let i = 0; i < lowerCase.length; i++) {
-			if (!ALPHABET.includes(lowerCase[i])) {
-				errorText = 'File code can only include letters and numbers.';
-				return;
-			}
-		}
+		const lowerCaseFileCode = fileCode.toLowerCase();
+		disabled = true;
 		errorText = '';
 		loading = true;
-		disabled = true;
-		//goto(`/${fileCode.toLowerCase()}`);
+		let result: Result = await getFile(lowerCaseFileCode, filePassword);
+		if (result.success) {
+			localStorage.setItem(lowerCaseFileCode, result.value);
+			localStorage.setItem(`${lowerCaseFileCode}Name`, result.name);
+			goto(`/${lowerCaseFileCode}`);
+		} else {
+			loading = false;
+			if (result.value === 'Failed to authenticate.') {
+				errorText = 'Invalid username or password.';
+			} else {
+				errorText = result.value;
+			}
+			disabled = false;
+		}
 	}
 </script>
 

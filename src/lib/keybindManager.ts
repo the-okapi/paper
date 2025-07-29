@@ -232,10 +232,10 @@ export function getText(cursor: boolean) {
 	return toReturn;
 }
 
-function getTokensText() {
+export function getTokensText() {
 	return JSON.stringify(tokensList);
 }
 
-function setTokens(to: string) {
+export function setTokens(to: string) {
 	tokensList = JSON.parse(to);
 }
