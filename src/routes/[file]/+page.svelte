@@ -81,6 +81,7 @@
 				if (key === 'b') bClick();
 				else if (key === 'u') uClick();
 				else if (key === 'i') iClick();
+				else if (key === 's') save();
 			} else {
 				keydown(event, $state.snapshot(formatting), $state.snapshot(size) / 10);
 				text = getText($state.snapshot(editor));
