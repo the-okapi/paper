@@ -36,6 +36,7 @@
 	let name = $state('Loading...');
 	let saveText = $state('');
 	let errorText = $state('');
+    let renameErrorText = $state('');
 
 	let renameValue = $state('');
 
@@ -148,17 +149,23 @@
 	}
 
 	async function renameFile() {
-		const result = await renameFilePB(renameValue, file);
-		if (result.success) {
-			name = renameValue;
-			saveText = 'File Renamed';
-			window.setTimeout(() => (saveText = ''), 3000);
-			reloadButton();
-		} else {
-			errorText = result.error;
-		}
-		renameDialogOpen = false;
-		renameValue = '';
+        if (renameValue !== '') {
+            renameErrorText = '';
+            const result = await renameFilePB(renameValue, file);
+            if (result.success) {
+                name = renameValue;
+                saveText = 'File Renamed';
+                window.setTimeout(() => (saveText = ''), 3000);
+                reloadButton();
+            } else {
+                errorText = result.error;
+            }
+            renameDialogOpen = false;
+            renameValue = '';
+        } else {
+            renameErrorText = 'Name cannot be empty.';
+        }
+
 	}
 
 	function renameButton() {
@@ -224,6 +231,7 @@
 			placeholder={name}
 			bind:value={renameValue}
 		/>
+        <p class="text-red-500">{renameErrorText}</p>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 			<AlertDialog.Action onclick={renameFile}>Continue</AlertDialog.Action>
