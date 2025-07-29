@@ -14,14 +14,6 @@
 
 	let modifierPressed = false;
 
-	function oncontextmenu(event: Event) {
-		event.preventDefault();
-	}
-
-	function ondblclick(event: Event) {
-		event.preventDefault();
-	}
-
 	let bVariant: 'secondary' | 'default' = $state('secondary');
 	let iVariant: 'secondary' | 'default' = $state('secondary');
 	let uVariant: 'secondary' | 'default' = $state('secondary');
@@ -94,7 +86,7 @@
 	}
 </script>
 
-<svelte:window {onkeydown} {onkeyup} {oncontextmenu} {ondblclick} />
+<svelte:window {onkeydown} {onkeyup} />
 
 <main>
 	<div class="m-4 grid grid-cols-3">
