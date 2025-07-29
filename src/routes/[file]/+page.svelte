@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { keydown, getText, toggleItalic, setFontSize, setTokens } from '$lib/keybindManager';
+	import {
+		keydown,
+		getText,
+		toggleItalic,
+		setFontSize,
+		setTokens,
+		getTokensText
+	} from '$lib/keybindManager';
 	import { Button, AlertDialog } from '$lib/components';
 	import { toggleMode } from 'mode-watcher';
 	import SunIcon from '@lucide/svelte/icons/sun';
@@ -13,7 +20,7 @@
 	import DeleteIcon from '@lucide/svelte/icons/trash-2';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { pb, deleteFilePB } from '$lib/pocketbase';
+	import { pb, deleteFilePB, saveFile } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 
 	let editor = $state(false);
@@ -22,6 +29,8 @@
 
 	let text = $state(getText(false));
 	let name = $state('Loading...');
+	let saveText = $state('');
+	let errorText = $state('');
 
 	let modifierPressed = false;
 
@@ -120,8 +129,6 @@
 		}
 	});
 
-	function save() {}
-
 	function deleteButton() {
 		deleteAlertOpen = true;
 	}
@@ -135,6 +142,22 @@
 			goto('/?deleted');
 		} else {
 			goto(`/?error=${result.error}`);
+		}
+	}
+
+	async function save() {
+		errorText = '';
+		saveText = 'Saving...';
+		const result = await saveFile(
+			getTokensText(),
+			localStorage.getItem(`${page.params.file}File`) ?? ''
+		);
+		if (result.success) {
+			saveText = 'Saved';
+			window.setTimeout(() => (saveText = ''), 3000);
+		} else {
+			saveText = '';
+			errorText = result.error;
 		}
 	}
 </script>
@@ -184,6 +207,8 @@
 		</div>
 		<div class="text-right">
 			{#if editor}
+				<span class="mr-3 text-red-500">{errorText}</span>
+				<span class="mr-3">{saveText}</span>
 				<Button class="m-1" size="icon" onclick={save} title="Save">
 					<SaveIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>

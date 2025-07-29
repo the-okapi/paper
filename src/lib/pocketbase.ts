@@ -31,3 +31,15 @@ export async function deleteFilePB(fileStr: string) {
 		return { success: false, error: error.message };
 	}
 }
+
+export async function saveFile(tokens: string, fileStr: string) {
+	try {
+		const file = JSON.parse(fileStr);
+		await pb.collection('files').update(file.id, {
+			value: tokens
+		});
+		return { success: true, error: '' };
+	} catch (error: any) {
+		return { success: false, error: error.message };
+	}
+}
