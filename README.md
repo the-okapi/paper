@@ -18,3 +18,11 @@ Repaper is a word processing website aimed to **prevent AI cheating** in writing
 ### Encryption
 
 File could be encrypted with a key received from a custom route (pb_hooks)
+
+### Browser extension (maybe)
+
+Could write down what websites user visits while turned on. Maybe the file could only be editable is the extension is turned on.
+List of websites that are verified and if only those websites is visited, file could have a verified stamp
+List of websites that are not allowed, and if one of those websites is visited, file could have a cheater stamp
+
+List could be persistent, or could be saved to db and accessed with a code.
