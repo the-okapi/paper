@@ -9,19 +9,19 @@
 	} from '$lib/keybindManager';
 	import { Button, AlertDialog, Input } from '$lib/components';
 	import { toggleMode } from 'mode-watcher';
-    import SunIcon from '@lucide/svelte/icons/sun';
-    import MoonIcon from '@lucide/svelte/icons/moon';
-    import BoldIcon from '@lucide/svelte/icons/bold';
-    import ItalicIcon from '@lucide/svelte/icons/italic';
-    import UnderlineIcon from '@lucide/svelte/icons/underline';
-    import BiggerIcon from '@lucide/svelte/icons/a-arrow-up';
-    import SmallerIcon from '@lucide/svelte/icons/a-arrow-down';
-    import SaveIcon from '@lucide/svelte/icons/save';
-    import DeleteIcon from '@lucide/svelte/icons/trash-2';
-    import RenameIcon from '@lucide/svelte/icons/square-pen';
-    import ReloadIcon from '@lucide/svelte/icons/rotate-cw';
-    import ShareIcon from '@lucide/svelte/icons/share';
-    import HomeIcon from '@lucide/svelte/icons/house';
+	import SunIcon from '@lucide/svelte/icons/sun';
+	import MoonIcon from '@lucide/svelte/icons/moon';
+	import BoldIcon from '@lucide/svelte/icons/bold';
+	import ItalicIcon from '@lucide/svelte/icons/italic';
+	import UnderlineIcon from '@lucide/svelte/icons/underline';
+	import BiggerIcon from '@lucide/svelte/icons/a-arrow-up';
+	import SmallerIcon from '@lucide/svelte/icons/a-arrow-down';
+	import SaveIcon from '@lucide/svelte/icons/save';
+	import DeleteIcon from '@lucide/svelte/icons/trash-2';
+	import RenameIcon from '@lucide/svelte/icons/square-pen';
+	import ReloadIcon from '@lucide/svelte/icons/rotate-cw';
+	import ShareIcon from '@lucide/svelte/icons/share';
+	import HomeIcon from '@lucide/svelte/icons/house';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { pb, deleteFilePB, saveFile, renameFilePB } from '$lib/pocketbase';
@@ -35,8 +35,8 @@
 	let editorShareDialogOpen = $state(false);
 	let viewerShareDialogOpen = $state(false);
 
-    let editCodePass = ['', ''];
-    let viewCodePass = ['', ''];
+	let editCode = $state('');
+	let viewCode = $state('');
 
 	let file: string;
 
@@ -205,19 +205,18 @@
 			setTokens(text);
 			name = localStorage.getItem(`${page.params.file}Name`) ?? '';
 			file = localStorage.getItem(`${page.params.file}File`) ?? '';
-            const fileObj = JSON.parse(file);
-                const viewUser = fileObj.expand.viewUser;
+			const fileObj = JSON.parse(file);
+			console.log(fileObj);
 			if (pb.authStore.record?.editor) {
-                const editUser = fileObj.expand.editUser;
 				editor = true;
 				text = getText(true);
-				textBigger();
-				textSmaller();
+				editCode = fileObj.expand.editUser.username;
 			} else {
 				text = getText(false);
-				textBigger();
-				textSmaller();
 			}
+			viewCode = fileObj.expand.viewUser.username;
+			textBigger();
+			textSmaller();
 		} else {
 			goto('/?invalid');
 		}
@@ -270,12 +269,20 @@
 		<AlertDialog.Header>
 			<AlertDialog.Title>Share this file</AlertDialog.Title>
 			<AlertDialog.Description
-				>Use the codes and passwords below to share this file to other people. No account required.</AlertDialog.Description
+				>Use the codes below along with the file password to share this file to other people.</AlertDialog.Description
 			>
 		</AlertDialog.Header>
-        <AlertDialog.Footer>
-            <AlertDialog.Action onclick={closeEditorShare}>Close</AlertDialog.Action>
-        </AlertDialog.Footer>
+		<div>
+			<p>File Code for Editors (can edit, rename and delete):</p>
+			<p class="text-[1.3rem] font-black">{editCode}</p>
+		</div>
+		<div>
+			<p>File Code for Viewers (can only view):</p>
+			<p class="text-[1.3rem] font-black">{viewCode}</p>
+		</div>
+		<AlertDialog.Footer>
+			<AlertDialog.Action onclick={closeEditorShare}>Close</AlertDialog.Action>
+		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
@@ -284,19 +291,23 @@
 		<AlertDialog.Header>
 			<AlertDialog.Title>Share this file</AlertDialog.Title>
 			<AlertDialog.Description
-				>Use the code and password below to share this file to other people. No account required.</AlertDialog.Description
+				>Use the code below along with the file password to share this file to other people.</AlertDialog.Description
 			>
 		</AlertDialog.Header>
-        <AlertDialog.Footer>
-            <AlertDialog.Action onclick={closeViewerShare}>Close</AlertDialog.Action>
-        </AlertDialog.Footer>
+		<div>
+			<p>File Code for Viewers (can only view):</p>
+			<p class="text-[1.3rem] font-black">{viewCode}</p>
+		</div>
+		<AlertDialog.Footer>
+			<AlertDialog.Action onclick={closeViewerShare}>Close</AlertDialog.Action>
+		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
 <main>
 	<div class="m-4 grid grid-cols-3">
 		<div class="text-left">
-            <Button onclick={toggleMode} variant="outline" size="icon" class="m-1">
+			<Button onclick={toggleMode} variant="outline" size="icon" class="m-1">
 				<SunIcon
 					class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
 				/>
@@ -339,11 +350,11 @@
 				<Button class="m-1" size="icon" onclick={deleteButton} title="Delete File">
 					<DeleteIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
-            {/if}
-            <Button onclick={reloadButton} size="icon" class="m-1" title="Reload File">
+			{/if}
+			<Button onclick={reloadButton} size="icon" class="m-1" title="Reload File">
 				<ReloadIcon class="h-[1.2rem] w-[1.2rem]" />
 			</Button>
-            {#if editor}
+			{#if editor}
 				<Button class="m-1" size="icon" onclick={editorShare} title="Share File">
 					<ShareIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
@@ -352,7 +363,7 @@
 					<ShareIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			{/if}
-            <Button onclick={() => goto('/')} size="icon" class="m-1" title="Reload File">
+			<Button onclick={() => goto('/')} size="icon" class="m-1" title="Reload File">
 				<HomeIcon class="h-[1.2rem] w-[1.2rem]" />
 			</Button>
 		</div>
