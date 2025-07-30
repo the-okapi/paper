@@ -42,53 +42,76 @@
 		const lcfc = fileCode.toLowerCase();
 		signIn(lcfc, true);
 	}
+
+	function createFile() {
+		goto('/create');
+	}
+
 	onMount(() => {
 		if (page.url.searchParams.getAll('invalid').length === 1) {
 			errorText = 'File not found.';
+			window.history.replaceState({}, document.title, '/');
 		} else if (page.url.searchParams.getAll('deleted').length === 1) {
 			errorText = 'File deleted successfully.';
+			window.history.replaceState({}, document.title, '/');
 		} else if (page.url.searchParams.getAll('reload').length === 1 && pb.authStore.isValid) {
 			signIn(pb.authStore.record?.username, false);
+			window.history.replaceState({}, document.title, '/');
 		} else {
 			const error = page.url.searchParams.getAll('error');
 			if (error.length > 0) {
 				errorText = 'Error: ' + error[0];
 			}
+			window.history.replaceState({}, document.title, '/');
 		}
 	});
 </script>
 
-<h1 class="mt-[11.5%] text-center text-[4em] font-black select-none">Repaper</h1>
-
-{#if !loading}
-	<form {onsubmit} class="m-auto mt-[7%] block w-fit align-middle">
-		<Label for="fileCode" class="ml-0.5 text-lg font-bold {disabled ? 'text-neutral-600' : ''}"
-			>File Code & Password:</Label
-		>
-		<Input
-			required
-			id="fileCode"
-			bind:value={fileCode}
-			type="text"
-			class="mt-1 mb-2 w-[24rem] disabled:cursor-default"
-			placeholder="File Code"
-			{disabled}
-		/>
-		<div class="mt-1.5 flex">
-			<Input
-				required
-				class="disabled:cursor-default"
-				bind:value={filePassword}
-				{disabled}
-				type="password"
-				placeholder="File Password"
-			/>
-			<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
+<h1 class="mt-[23vh] h-[14vh] text-center text-[4em] font-black select-none">Repaper</h1>
+<p class="text-center font-bold text-red-500">
+	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>
+</p>
+{#if loading}
+	<p class="text-center font-bold text-[#00bfff]">Loading...</p>
+{:else}
+	<div class="funGrid grid text-center">
+		<div class="mt-[24vh]">
+			<Button onclick={createFile} class="text-md h-12">Create File</Button>
 		</div>
-	</form>
+		<div class="vl"></div>
+		<div class="my-[17vh]">
+			{#if !loading}
+				<form {onsubmit} class="m-auto block w-fit align-middle">
+					<Label
+						for="fileCode"
+						class="ml-0.5 text-lg font-bold {disabled ? 'text-neutral-600' : ''}"
+						>Existing File Code & Password:</Label
+					>
+					<Input
+						required
+						id="fileCode"
+						bind:value={fileCode}
+						type="text"
+						class="mt-1 mb-2 w-[24rem] disabled:cursor-default"
+						placeholder="File Code"
+						{disabled}
+					/>
+					<div class="mt-1.5 flex">
+						<Input
+							required
+							class="disabled:cursor-default"
+							bind:value={filePassword}
+							{disabled}
+							type="password"
+							placeholder="File Password"
+						/>
+						<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
+					</div>
+				</form>
+			{/if}
+		</div>
+	</div>
 {/if}
-<p class="text-center font-bold text-red-500">{errorText}</p>
-{#if loading}<p class="text-center font-bold text-[#00bfff]">Loading...</p>{/if}
 
 <style>
 	h1 {
@@ -96,5 +119,13 @@
 			0 0 10px #00bfff,
 			0 0 20px #00bfff,
 			0 0 30px #00bfff;
+	}
+	.funGrid {
+		grid-template-columns: 5fr 1fr 5fr;
+	}
+	.vl {
+		height: 53vh;
+		border-left: 1px solid white;
+		margin: auto;
 	}
 </style>

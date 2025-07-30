@@ -31,6 +31,7 @@
 
 	let deleteAlertOpen = $state(false);
 	let renameDialogOpen = $state(false);
+	let reloadWarningOpen = $state(false);
 
 	let editorShareDialogOpen = $state(false);
 	let viewerShareDialogOpen = $state(false);
@@ -147,9 +148,8 @@
 		saveText = 'Saving...';
 		const result = await saveFile(getTokensText(), file);
 		if (result.success) {
-			saveText = 'Saved';
 			window.setTimeout(() => (saveText = ''), 3000);
-			reloadButton();
+			reloadButton(false);
 		} else {
 			saveText = '';
 			errorText = result.error;
@@ -162,9 +162,8 @@
 			const result = await renameFilePB(renameValue, file);
 			if (result.success) {
 				name = renameValue;
-				saveText = 'File Renamed';
 				window.setTimeout(() => (saveText = ''), 3000);
-				reloadButton();
+				reloadButton(false);
 			} else {
 				errorText = result.error;
 			}
@@ -179,7 +178,14 @@
 		renameDialogOpen = true;
 	}
 
-	function reloadButton() {
+	function reloadButton(warning: boolean) {
+        if (warning) {
+		    reloadWarningOpen = true;
+        } else reload();
+	}
+
+	function reload() {
+		reloadWarningOpen = false;
 		goto('/?reload');
 	}
 
@@ -238,6 +244,22 @@
 			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 			<AlertDialog.Action onclick={deleteFile}>Continue</AlertDialog.Action>
 		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={reloadWarningOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you sure you want to reload this file?</AlertDialog.Title>
+			<AlertDialog.Description
+				>This will discard any unsaved changes you may have. These changes cannot be retrieved once
+				this file is reloaded.</AlertDialog.Description
+			>
+		</AlertDialog.Header>
+        <AlertDialog.Footer>
+            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+            <AlertDialog.Action onclick={reload}>Continue</AlertDialog.Action>
+        </AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
@@ -351,7 +373,7 @@
 					<DeleteIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			{/if}
-			<Button onclick={reloadButton} size="icon" class="m-1" title="Reload File">
+			<Button onclick={() => reloadButton(true)} size="icon" class="m-1" title="Reload File">
 				<ReloadIcon class="h-[1.2rem] w-[1.2rem]" />
 			</Button>
 			{#if editor}
