@@ -13,3 +13,8 @@ Repaper is a word processing website aimed to **prevent AI cheating** in writing
 - **No Crashes**
 - **List of files**
 - Way to check if person is working
+- File value is encrypted
+
+### Encryption
+
+File could be encrypted with a key received from a custom route (pb_hooks)
