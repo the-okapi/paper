@@ -176,9 +176,9 @@
 	}
 
 	function reloadButton(warning: boolean) {
-        if (warning) {
-		    reloadWarningOpen = true;
-        } else reload();
+		if (warning && editor) {
+			reloadWarningOpen = true;
+		} else reload();
 	}
 
 	function reload() {
@@ -228,6 +228,10 @@
 
 <svelte:window {onkeydown} {onkeyup} />
 
+<svelte:head>
+	<title>{name} - Repaper</title>
+</svelte:head>
+
 <AlertDialog.Root bind:open={deleteAlertOpen}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
@@ -253,10 +257,10 @@
 				this file is reloaded.</AlertDialog.Description
 			>
 		</AlertDialog.Header>
-        <AlertDialog.Footer>
-            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-            <AlertDialog.Action onclick={reload}>Continue</AlertDialog.Action>
-        </AlertDialog.Footer>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={reload}>Continue</AlertDialog.Action>
+		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
@@ -272,7 +276,7 @@
 			id="renameInput"
 			class="h-10 text-sm"
 			type="text"
-			placeholder={name}
+			placeholder="New Name"
 			bind:value={renameValue}
 		/>
 		<p class="text-red-500">{renameErrorText}</p>

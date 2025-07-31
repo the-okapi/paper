@@ -67,6 +67,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Repaper</title>
+</svelte:head>
+
 <h1 class="mt-[23vh] h-[14vh] text-center text-[4em] font-black select-none">Repaper</h1>
 <p class="text-center font-bold text-red-500">
 	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>
