@@ -24,7 +24,7 @@
 			localStorage.setItem(lcfc, result.value);
 			localStorage.setItem(`${lcfc}Name`, result.name);
 			localStorage.setItem(`${lcfc}File`, result.file);
-			goto(`/${lcfc}`);
+			goto(`/file/${lcfc}`);
 		} else {
 			loading = false;
 			if (result.value === 'Failed to authenticate.') {
