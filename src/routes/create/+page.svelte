@@ -66,8 +66,7 @@
 			goto('/?reload');
 		} else {
 			loading = false;
-			console.log(result.error);
-			errorText = result.error.message;
+			errorText = result.error;
 		}
 	}
 </script>
@@ -75,8 +74,11 @@
 <svelte:head>
 	<title>Repaper</title>
 </svelte:head>
-
-<p class="mt-[12vh] text-center text-lg text-[#00bfff] underline"><a href="/">Home</a></p>
+{#if loading}
+	<p class="mt-[12vh] text-center text-lg text-transparent">invisible</p>
+{:else}
+	<p class="mt-[12vh] text-center text-lg text-[#00bfff] underline"><a href="/">Home</a></p>
+{/if}
 <h1 class="neon text-center text-[3em] font-black select-none">Create New File</h1>
 <p class="text-center font-bold text-red-500">
 	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>

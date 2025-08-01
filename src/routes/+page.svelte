@@ -47,19 +47,19 @@
 	onMount(() => {
 		if (page.url.searchParams.getAll('invalid').length === 1) {
 			errorText = 'File not found.';
-			window.history.replaceState({}, document.title, '/');
+			goto('/', { replaceState: true });
 		} else if (page.url.searchParams.getAll('deleted').length === 1) {
 			errorText = 'File deleted successfully.';
-			window.history.replaceState({}, document.title, '/');
+			goto('/', { replaceState: true });
 		} else if (page.url.searchParams.getAll('reload').length === 1 && pb.authStore.isValid) {
 			signIn(pb.authStore.record?.username, false);
-			window.history.replaceState({}, document.title, '/');
+			goto('/', { replaceState: true });
 		} else {
 			const error = page.url.searchParams.getAll('error');
 			if (error.length > 0) {
 				errorText = 'Error: ' + error[0];
 			}
-			window.history.replaceState({}, document.title, '/');
+			goto('/', { replaceState: true });
 		}
 	});
 </script>

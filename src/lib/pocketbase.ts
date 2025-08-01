@@ -75,7 +75,6 @@ export async function createFile(
 	viewerPassword: string
 ) {
 	const random = generateID();
-	console.log(random);
 	try {
 		await pb.collection('users').create({
 			id: random + 'editor',
@@ -102,6 +101,6 @@ export async function createFile(
 		await pb.collection('users').authWithPassword(editorCode, editorPassword);
 		return { success: true, error: '' };
 	} catch (error: any) {
-		return { success: false, error };
+		return { success: false, error: error.message };
 	}
 }

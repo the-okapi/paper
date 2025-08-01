@@ -114,10 +114,6 @@ let tokensList: Token[] = [];
 
 let cursorPosition = 0;
 
-function findLastLineCursorPosition() {}
-
-function findNextLineCursorPosition() {}
-
 // check if character has different value than keycode
 function textCodesIncludes(code: string) {
 	// iterate through each item that has a different keycode than value

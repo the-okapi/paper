@@ -54,6 +54,8 @@
 	let formatting = $state([false, false, false]);
 	let size = $state(10);
 
+	let cursorVisible = true;
+
 	function bClick() {
 		if (formatting[0]) {
 			bVariant = 'secondary';
@@ -209,7 +211,6 @@
 			name = localStorage.getItem(`${page.params.file}Name`) ?? '';
 			file = localStorage.getItem(`${page.params.file}File`) ?? '';
 			const fileObj = JSON.parse(file);
-			console.log(fileObj);
 			if (pb.authStore.record?.editor) {
 				editor = true;
 				text = getText(true);
@@ -224,6 +225,15 @@
 			goto('/?invalid');
 		}
 	});
+	setInterval(() => {
+		if (document.hasFocus()) {
+			if (cursorVisible) cursorVisible = false;
+			else cursorVisible = true;
+			text = getText(cursorVisible);
+		} else {
+			text = getText(true);
+		}
+	}, 500);
 </script>
 
 <svelte:window {onkeydown} {onkeyup} />
@@ -382,8 +392,8 @@
 			</Button>
 		</div>
 	</div>
-	<hr />
-	<div class="prewrap m-5">{@html text}</div>
+	<hr class="w-[100%]" />
+	<div class="prewrap m-5 w-fit">{@html text}</div>
 </main>
 
 <style>
