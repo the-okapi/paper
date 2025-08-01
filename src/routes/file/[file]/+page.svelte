@@ -56,6 +56,16 @@
 
 	let cursorVisible = true;
 
+    const blinkingInterval = setInterval(() => {
+		if (document.hasFocus()) {
+			if (cursorVisible) cursorVisible = false;
+			else cursorVisible = true;
+			text = getText(cursorVisible);
+		} else {
+			text = getText(true);
+		}
+	}, 500);
+
 	function bClick() {
 		if (formatting[0]) {
 			bVariant = 'secondary';
@@ -224,16 +234,8 @@
 		} else {
 			goto('/?invalid');
 		}
+        return () => clearInterval(blinkingInterval);
 	});
-	setInterval(() => {
-		if (document.hasFocus()) {
-			if (cursorVisible) cursorVisible = false;
-			else cursorVisible = true;
-			text = getText(cursorVisible);
-		} else {
-			text = getText(true);
-		}
-	}, 500);
 </script>
 
 <svelte:window {onkeydown} {onkeyup} />
