@@ -56,3 +56,52 @@ export async function renameFilePB(to: string, fileStr: string) {
 		return { success: false, error: error.message };
 	}
 }
+
+function generateID() {
+	const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	const charactersLength = characters.length;
+	for (let i = 0; i < 9; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
+
+export async function createFile(
+	name: string,
+	editorCode: string,
+	editorPassword: string,
+	viewerCode: string,
+	viewerPassword: string
+) {
+	const random = generateID();
+	console.log(random);
+	try {
+		await pb.collection('users').create({
+			id: random + 'editor',
+			username: editorCode,
+			password: editorPassword,
+			passwordConfirm: editorPassword,
+			editor: true
+		});
+		await pb.collection('users').create({
+			id: random + 'viewer',
+			username: viewerCode,
+			password: viewerPassword,
+			passwordConfirm: viewerPassword,
+			editor: false,
+			editorUser: random + 'editor'
+		});
+		await pb.collection('files').create({
+			id: random + 'fileid',
+			name,
+			value: '[]',
+			editUser: random + 'editor',
+			viewUser: random + 'viewer'
+		});
+		await pb.collection('users').authWithPassword(editorCode, editorPassword);
+		return { success: true, error: '' };
+	} catch (error: any) {
+		return { success: false, error };
+	}
+}

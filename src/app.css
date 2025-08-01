@@ -169,3 +169,10 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+.neon {
+	text-shadow:
+		0 0 10px #00bfff,
+		0 0 20px #00bfff,
+		0 0 30px #00bfff;
+}

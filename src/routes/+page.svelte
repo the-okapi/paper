@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { Input, Label, Button } from '$lib/components';
 	import { getFile, pb } from '$lib/pocketbase';
 	import type { Result } from '$lib/pocketbase';
@@ -12,10 +12,8 @@
 	let errorText = $state('');
 
 	let loading = $state(false);
-	let disabled = $state(false);
 
 	async function signIn(lcfc: string, auth: boolean) {
-		disabled = true;
 		errorText = '';
 		loading = true;
 		if (auth) localStorage.clear();
@@ -32,13 +30,12 @@
 			} else {
 				errorText = 'Error: ' + result.value;
 			}
-			disabled = false;
 		}
 	}
 
 	async function onsubmit(event: Event) {
 		event.preventDefault();
-		// lower case file name
+		// lcfc stands for lower case file name
 		const lcfc = fileCode.toLowerCase();
 		signIn(lcfc, true);
 	}
@@ -71,7 +68,7 @@
 	<title>Repaper</title>
 </svelte:head>
 
-<h1 class="mt-[18vh] h-[14vh] text-center text-[4em] font-black select-none">Repaper</h1>
+<h1 class="neon mt-[18vh] h-[14vh] text-center text-[4em] font-black select-none">Repaper</h1>
 <p class="text-center font-bold text-red-500">
 	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>
 </p>
@@ -82,44 +79,23 @@
 		{#if !loading}
 			<div class="mt-[11vh]">
 				<form {onsubmit} class="m-auto block w-fit align-middle">
-					<Label
-						for="fileCode"
-						class="ml-0.5 text-lg font-bold {disabled ? 'text-neutral-600' : ''}"
-						>Existing File Code & Password:</Label
-					>
+					<Label for="fileCode">Existing File Code & Password:</Label>
 					<Input
 						required
 						id="fileCode"
 						bind:value={fileCode}
 						type="text"
-						class="mt-1 mb-2 w-[24rem] disabled:cursor-default"
+						class="my-2 w-[24rem]"
 						placeholder="File Code"
-						{disabled}
 					/>
 					<div class="mt-1.5 flex">
-						<Input
-							required
-							class="disabled:cursor-default"
-							bind:value={filePassword}
-							{disabled}
-							type="password"
-							placeholder="File Password"
-						/>
-						<Button class="text-md ml-2 h-12 w-14" type="submit" {disabled}>Go</Button>
+						<Input required bind:value={filePassword} type="password" placeholder="File Password" />
+						<Button class="ml-2 w-14" type="submit">Go</Button>
 					</div>
 				</form>
 			</div>
-            <hr class="my-[5vh] w-[50vw] m-auto">
-		    <Button onclick={createFile} class="text-md h-12">Create File</Button>
+			<hr class="m-auto my-[5vh] w-[50vw]" />
+			<Button onclick={createFile}>Create New File</Button>
 		{/if}
 	</div>
 {/if}
-
-<style>
-	h1 {
-		text-shadow:
-			0 0 10px #00bfff,
-			0 0 20px #00bfff,
-			0 0 30px #00bfff;
-	}
-</style>
