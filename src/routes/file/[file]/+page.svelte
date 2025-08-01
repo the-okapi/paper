@@ -56,7 +56,7 @@
 
 	let cursorVisible = true;
 
-    const blinkingInterval = setInterval(() => {
+	const blinkingInterval = setInterval(() => {
 		if (document.hasFocus()) {
 			if (cursorVisible) cursorVisible = false;
 			else cursorVisible = true;
@@ -234,7 +234,7 @@
 		} else {
 			goto('/?invalid');
 		}
-        return () => clearInterval(blinkingInterval);
+		return () => clearInterval(blinkingInterval);
 	});
 </script>
 
@@ -346,6 +346,7 @@
 				<Button class="m-1" size="icon" variant="outline" onclick={textBigger} title="Bigger">
 					<BiggerIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
+				<button class="font-black">{size}</button>
 				<Button class="m-1" size="icon" variant="outline" onclick={textSmaller} title="Smaller">
 					<SmallerIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
