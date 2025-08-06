@@ -73,7 +73,7 @@
 	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>
 </p>
 {#if loading}
-	<p class="text-center font-bold text-[#00bfff]">Loading...</p>
+	<p class="text-center font-bold text-[#00dfdf]">Loading...</p>
 {:else}
 	<div class="text-center">
 		{#if !loading}

@@ -11,7 +11,7 @@
 	--card-foreground: #0a0a0a;
 	--popover: #ffffff;
 	--popover-foreground: #0a0a0a;
-	--primary: #00bfff;
+	--primary: #ff3e00;
 	--primary-foreground: #fafafa;
 	--secondary: #f5f5f5;
 	--secondary-foreground: #171717;
@@ -37,11 +37,8 @@
 	--sidebar-accent-foreground: #171717;
 	--sidebar-border: #e5e5e5;
 	--sidebar-ring: #a1a1a1;
-	--font-sans:
-		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-		'Segoe UI Symbol', 'Noto Color Emoji';
-	--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+	--font-sans: 'Fira Sans', ui-sans-serif, sans-serif, system-ui;
+	--font-serif: 'DM Serif', ui-serif, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
@@ -54,6 +51,8 @@
 	--shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
 	--shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
 	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+	--tracking-normal: 0em;
+	--spacing: 0.25rem;
 }
 
 .dark {
@@ -63,7 +62,7 @@
 	--card-foreground: #fafafa;
 	--popover: #262626;
 	--popover-foreground: #fafafa;
-	--primary: #00bfff;
+	--primary: #00dfdf;
 	--primary-foreground: #171717;
 	--secondary: #262626;
 	--secondary-foreground: #fafafa;
@@ -89,11 +88,8 @@
 	--sidebar-accent-foreground: #fafafa;
 	--sidebar-border: #282828;
 	--sidebar-ring: #525252;
-	--font-sans:
-		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-		'Segoe UI Symbol', 'Noto Color Emoji';
-	--font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+	--font-sans: 'Fira Sans', ui-sans-serif, sans-serif, system-ui;
+	--font-serif: 'DM Serif Display', ui-serif, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
@@ -171,8 +167,39 @@
 }
 
 .neon {
-	text-shadow:
-		0 0 10px #00bfff,
-		0 0 20px #00bfff,
-		0 0 30px #00bfff;
+	/*text-shadow:
+		0 0 10px #00dfdf,
+		0 0 20px #00dfdf,
+		0 0 30px #00dfdf;*/
+	color: #00dfdf;
+	font-family: serif;
+}
+
+@font-face {
+	font-family: 'DM Serif Display';
+	src: local('DM Serif Display'), url('/DMSerif.ttf');
+}
+
+@font-face {
+	font-family: 'Fira Sans';
+	src: local('Fira Sans'), url('/FiraSans-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'Fira Sans';
+	src: local('Fira Sans'), url('/FiraSans-Bold.ttf');
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: 'Fira Sans';
+	src: local('Fira Sans'), url('/FiraSans-Italic.ttf');
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Fira Sans';
+	src: local('Fira Sans'), url('/FiraSans-BoldItalic.ttf');
+	font-weight: bold;
+	font-style: italic;
 }

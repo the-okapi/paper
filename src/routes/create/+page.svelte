@@ -69,6 +69,9 @@
 			errorText = result.error;
 		}
 	}
+	function home() {
+		goto('/');
+	}
 </script>
 
 <svelte:head>
@@ -77,7 +80,10 @@
 {#if loading}
 	<p class="mt-[12vh] text-center text-lg text-transparent">invisible</p>
 {:else}
-	<p class="mt-[12vh] text-center text-lg text-[#00bfff] underline"><a href="/">Home</a></p>
+	<div class="m-auto">
+		<!--<p class="mt-[12vh] text-center text-lg text-[#00dfdf] underline"><a href="/">Home</a></p>-->
+		<Button variant="link" class="mt-[12vh]" onclick={home}>Home</Button>
+	</div>
 {/if}
 <h1 class="neon text-center text-[3em] font-black select-none">Create New File</h1>
 <p class="text-center font-bold text-red-500">
@@ -85,7 +91,7 @@
 </p>
 
 {#if loading}
-	<p class="text-center font-bold text-[#00bfff]">Loading...</p>
+	<p class="text-center font-bold text-[#00dfdf]">Loading...</p>
 {:else}
 	<div class="m-auto w-[40%]">
 		{#if firstPage}

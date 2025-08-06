@@ -154,6 +154,8 @@ export function keydown(event: KeyboardEvent, formatting: boolean[], size: numbe
 		if (tokensList.length > Math.abs(cursorPosition)) cursorPosition -= 1;
 	} else if (event.key === 'ArrowRight') {
 		if (cursorPosition < 0) cursorPosition += 1;
+	} else if (event.key === 'ArrowUp') {
+	} else if (event.key === 'ArrowDown') {
 	} else if (textToAdd.includes(event.key)) {
 		tokensList.splice(tokensList.length + cursorPosition, 0, nt(event.key, ftw(formatting, size)));
 		// check if key pressed has different keycode than value and should be added to the text
@@ -182,15 +184,15 @@ export function toggleItalic() {
 }
 
 // return value of text
-export function getText(cursor: boolean) {
+export function getText(cursor: boolean, editor: boolean = true) {
 	const position = tokensList.length + cursorPosition;
-	let tokens;
+	let tokens: any;
 	if (cursor) {
 		tokens = tokensList.toSpliced(
 			position,
 			0,
 			nt(
-				'<span class="font-bold text-[#00bfff] ' +
+				'<span class="font-bold text-[#00dfdf] ' +
 					italicClass +
 					'" style="font-size: ' +
 					fontSize +
@@ -198,8 +200,19 @@ export function getText(cursor: boolean) {
 				['cursor']
 			)
 		);
-	} else {
-		tokens = tokensList;
+	} else if (editor) {
+		tokens = tokensList.toSpliced(
+			position,
+			0,
+			nt(
+				'<span class="font-bold text-transparent ' +
+					italicClass +
+					'" style="font-size: ' +
+					fontSize +
+					'em;">|</span>',
+				['cursor']
+			)
+		);
 	}
 	let toReturn = '';
 	// iterate through each token
@@ -234,4 +247,22 @@ export function getTokensText() {
 
 export function setTokens(to: string) {
 	tokensList = JSON.parse(to);
+}
+
+function findNextNewline() {
+	let currentIndex = tokensList.length + cursorPosition + 1;
+	for (let i = currentIndex; i < tokensList.length; i++) {
+		if (tokensList[i].value === '<br>') {
+			return i;
+		}
+	}
+}
+
+function findLastNewLine() {
+	let currentIndex = tokensList.length + cursorPosition - 1;
+	for (let i = currentIndex; i >= 0; i--) {
+		if (tokensList[i].value === '<br>') {
+			return i;
+		}
+	}
 }

@@ -20,9 +20,11 @@
 	import ShareIcon from '@lucide/svelte/icons/share';
 	import HomeIcon from '@lucide/svelte/icons/house';
 	import { onMount } from 'svelte';
+	import PDFIcon from '@lucide/svelte/icons/file-text';
 	import { page } from '$app/state';
 	import { pb, deleteFilePB, saveFile, renameFilePB } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
+	import { saveAsPDF } from '$lib/pdf';
 
 	let editor = $state(false);
 
@@ -56,13 +58,20 @@
 
 	let cursorVisible = true;
 
+	let hasFocus = true;
+
+	let fileURL = $state('');
+	let fileLink = $state();
+
 	const blinkingInterval = setInterval(() => {
-		if (document.hasFocus()) {
-			if (cursorVisible) cursorVisible = false;
-			else cursorVisible = true;
-			text = getText(cursorVisible);
-		} else {
-			text = getText(true);
+		if (editor) {
+			if (hasFocus) {
+				if (cursorVisible) cursorVisible = false;
+				else cursorVisible = true;
+				text = getText(cursorVisible);
+			} else {
+				text = getText(true);
+			}
 		}
 	}, 500);
 
@@ -85,7 +94,7 @@
 			formatting[1] = true;
 		}
 		toggleItalic();
-		text = getText($state.snapshot(editor));
+		text = getText(true);
 	}
 
 	function uClick() {
@@ -110,10 +119,18 @@
 				else if (key === 's') save();
 			} else {
 				keydown(event, $state.snapshot(formatting), $state.snapshot(size) / 10);
-				text = getText($state.snapshot(editor));
+				text = getText(true);
 			}
 		}
-		if (!renameDialogOpen) event.preventDefault();
+		if (
+			!renameDialogOpen &&
+			event.key !== 'Meta' &&
+			!(modifierPressed && event.key.toLowerCase() == 'p')
+		) {
+			event.preventDefault();
+		} else {
+			console.log(event.key);
+		}
 	}
 
 	function onkeyup(event: KeyboardEvent) {
@@ -127,13 +144,13 @@
 	function textBigger() {
 		size += 1;
 		setFontSize($state.snapshot(size / 10));
-		text = getText($state.snapshot(editor));
+		text = getText(true);
 	}
 
 	function textSmaller() {
 		if (size > 1) size -= 1;
 		setFontSize($state.snapshot(size / 10));
-		text = getText($state.snapshot(editor));
+		text = getText(true);
 	}
 
 	function deleteButton() {
@@ -157,7 +174,7 @@
 		saveText = 'Saving...';
 		const result = await saveFile(getTokensText(), file);
 		if (result.success) {
-			window.setTimeout(() => (saveText = ''), 3000);
+			setTimeout(() => (saveText = ''), 3000);
 			reloadButton(false);
 		} else {
 			saveText = '';
@@ -171,7 +188,7 @@
 			const result = await renameFilePB(renameValue, file);
 			if (result.success) {
 				name = renameValue;
-				window.setTimeout(() => (saveText = ''), 3000);
+				setTimeout(() => (saveText = ''), 3000);
 				reloadButton(false);
 			} else {
 				errorText = result.error;
@@ -206,12 +223,18 @@
 		viewerShareDialogOpen = true;
 	}
 
-	function closeEditorShare() {
-		editorShareDialogOpen = false;
+	function onfocus() {
+		hasFocus = true;
 	}
 
-	function closeViewerShare() {
-		viewerShareDialogOpen = false;
+	function onblur() {
+		hasFocus = false;
+	}
+
+	function downloadPDF() {
+		saveAsPDF();
+		//fileURL = saveAsPDF().href;
+		//fileLink?.click();
 	}
 
 	onMount(() => {
@@ -226,7 +249,7 @@
 				text = getText(true);
 				editCode = fileObj.expand.editUser.username;
 			} else {
-				text = getText(false);
+				text = getText(false, false);
 			}
 			viewCode = fileObj.expand.viewUser.username;
 			textBigger();
@@ -238,11 +261,13 @@
 	});
 </script>
 
-<svelte:window {onkeydown} {onkeyup} />
+<svelte:window {onkeydown} {onkeyup} {onfocus} {onblur} />
 
 <svelte:head>
 	<title>{name} - Repaper</title>
 </svelte:head>
+
+<a hidden href={fileURL} bind:this={fileLink} download>Download Link</a>
 
 <AlertDialog.Root bind:open={deleteAlertOpen}>
 	<AlertDialog.Content>
@@ -255,7 +280,7 @@
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action onclick={deleteFile}>Continue</AlertDialog.Action>
+			<Button onclick={deleteFile} variant="destructive">Continue</Button>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
@@ -316,7 +341,7 @@
 			<p class="text-[1.3rem] font-black">{viewCode}</p>
 		</div>
 		<AlertDialog.Footer>
-			<AlertDialog.Action onclick={closeEditorShare}>Close</AlertDialog.Action>
+			<AlertDialog.Cancel>Close</AlertDialog.Cancel>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
@@ -334,7 +359,7 @@
 			<p class="text-[1.3rem] font-black">{viewCode}</p>
 		</div>
 		<AlertDialog.Footer>
-			<AlertDialog.Action onclick={closeViewerShare}>Close</AlertDialog.Action>
+			<AlertDialog.Cancel>Close</AlertDialog.Cancel>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
@@ -342,6 +367,12 @@
 <main>
 	<div class="m-4 grid grid-cols-3">
 		<div class="text-left">
+			<Button onclick={() => goto('/')} size="icon" class="m-1" title="Go Home">
+				<HomeIcon class="h-[1.2rem] w-[1.2rem]" />
+			</Button>
+			<Button onclick={() => reloadButton(true)} size="icon" class="m-1" title="Reload File">
+				<ReloadIcon class="h-[1.2rem] w-[1.2rem]" />
+			</Button>
 			{#if editor}
 				<Button class="m-1" size="icon" variant="outline" onclick={textBigger} title="Bigger">
 					<BiggerIcon class="h-[1.2rem] w-[1.2rem]" />
@@ -362,7 +393,7 @@
 			{/if}
 		</div>
 		<div class="m-auto text-center">
-			<h1 class="text-[1.8rem] font-bold">{name}</h1>
+			<h1 class="font-serif text-[1.8rem] font-bold">{name}</h1>
 		</div>
 		<div class="text-right">
 			{#if editor}
@@ -378,8 +409,8 @@
 					<DeleteIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			{/if}
-			<Button onclick={() => reloadButton(true)} size="icon" class="m-1" title="Reload File">
-				<ReloadIcon class="h-[1.2rem] w-[1.2rem]" />
+			<Button class="m-1" size="icon" onclick={downloadPDF} title="Save as PDF">
+				<PDFIcon class="h-[1.2rem] w-[1.2rem]" />
 			</Button>
 			{#if editor}
 				<Button class="m-1" size="icon" onclick={editorShare} title="Share File">
@@ -390,22 +421,15 @@
 					<ShareIcon class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			{/if}
-			<Button onclick={() => goto('/')} size="icon" class="m-1" title="Reload File">
-				<HomeIcon class="h-[1.2rem] w-[1.2rem]" />
-			</Button>
 		</div>
 	</div>
 	<hr class="w-[100%]" />
-	<div class="prewrap m-5 w-fit">{@html text}</div>
+	<div class="prewrap text m-5 w-fit">{@html text}</div>
 </main>
 
 <style>
 	.prewrap {
-		font-family: system-ui;
 		max-width: calc(100vw - 2.5rem);
 		white-space: normal;
-	}
-	h1 {
-		font-family: system-ui;
 	}
 </style>
