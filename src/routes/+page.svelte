@@ -68,7 +68,9 @@
 	<title>Repaper</title>
 </svelte:head>
 
-<h1 class="neon mt-[18vh] h-[14vh] text-center text-[4em] font-black select-none">Repaper</h1>
+<h1 class="neon mt-[18vh] h-[14vh] text-center font-serif text-[4em] font-black select-none">
+	Repaper
+</h1>
 <p class="text-center font-bold text-red-500">
 	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>
 </p>

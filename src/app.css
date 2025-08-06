@@ -38,7 +38,7 @@
 	--sidebar-border: #e5e5e5;
 	--sidebar-ring: #a1a1a1;
 	--font-sans: 'Fira Sans', ui-sans-serif, sans-serif, system-ui;
-	--font-serif: 'DM Serif', ui-serif, serif;
+	--font-serif: 'New York', ui-serif, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
@@ -89,7 +89,7 @@
 	--sidebar-border: #282828;
 	--sidebar-ring: #525252;
 	--font-sans: 'Fira Sans', ui-sans-serif, sans-serif, system-ui;
-	--font-serif: 'DM Serif Display', ui-serif, serif;
+	--font-serif: 'New York', ui-serif, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
@@ -167,17 +167,15 @@
 }
 
 .neon {
-	/*text-shadow:
-		0 0 10px #00dfdf,
-		0 0 20px #00dfdf,
-		0 0 30px #00dfdf;*/
 	color: #00dfdf;
-	font-family: serif;
 }
 
 @font-face {
-	font-family: 'DM Serif Display';
-	src: local('DM Serif Display'), url('/DMSerif.ttf');
+	font-family: 'New York';
+	src:
+		local('New York Extra Large'),
+		url('/NewYorkExtraLarge-Black.otf') format('opentype');
+	font-weight: black;
 }
 
 @font-face {

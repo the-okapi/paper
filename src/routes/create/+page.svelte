@@ -85,7 +85,7 @@
 		<Button variant="link" class="mt-[12vh]" onclick={home}>Home</Button>
 	</div>
 {/if}
-<h1 class="neon text-center text-[3em] font-black select-none">Create New File</h1>
+<h1 class="neon text-center font-serif text-[3em] font-black select-none">Create New File</h1>
 <p class="text-center font-bold text-red-500">
 	<span class="text-transparent">m</span>{errorText}<span class="text-transparent">m</span>
 </p>

@@ -393,7 +393,7 @@
 			{/if}
 		</div>
 		<div class="m-auto text-center">
-			<h1 class="font-serif text-[1.8rem] font-bold">{name}</h1>
+			<h1 class="font-serif text-[1.8rem] font-black">{name}</h1>
 		</div>
 		<div class="text-right">
 			{#if editor}
