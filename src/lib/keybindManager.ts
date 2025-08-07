@@ -192,7 +192,7 @@ export function getText(cursor: boolean, editor: boolean = true) {
 			position,
 			0,
 			nt(
-				'<span class="font-bold text-[#00dfdf] ' +
+				'<span class="font-bold text-(--primary) ' +
 					italicClass +
 					'" style="font-size: ' +
 					fontSize +
