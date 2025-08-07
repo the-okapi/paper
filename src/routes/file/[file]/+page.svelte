@@ -311,7 +311,7 @@
 		</AlertDialog.Header>
 		<Input
 			id="renameInput"
-			class="h-10 text-sm"
+			class="h-10 font-serif text-sm font-black"
 			type="text"
 			placeholder="New Name"
 			bind:value={renameValue}

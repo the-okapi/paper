@@ -80,9 +80,8 @@
 {#if loading}
 	<p class="mt-[12vh] text-center text-lg text-transparent">invisible</p>
 {:else}
-	<div class="m-auto">
-		<!--<p class="mt-[12vh] text-center text-lg text-[#00dfdf] underline"><a href="/">Home</a></p>-->
-		<Button variant="link" class="mt-[12vh]" onclick={home}>Home</Button>
+	<div class="mt-[9vh] text-center">
+		<Button variant="link" onclick={home}>Home</Button>
 	</div>
 {/if}
 <h1 class="neon text-center font-serif text-[3em] font-black select-none">Create New File</h1>
