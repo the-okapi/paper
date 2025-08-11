@@ -38,7 +38,7 @@
 	--sidebar-border: #e5e5e5;
 	--sidebar-ring: #a1a1a1;
 	--font-sans: 'Fira Sans', ui-sans-serif, sans-serif, system-ui;
-	--font-serif: 'Spectral', ui-serif, serif;
+	--font-serif: 'Playfair Display', ui-serif, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
@@ -89,7 +89,7 @@
 	--sidebar-border: #282828;
 	--sidebar-ring: #525252;
 	--font-sans: 'Fira Sans', ui-sans-serif, sans-serif, system-ui;
-	--font-serif: 'Spectral', ui-serif, serif;
+	--font-serif: 'Playfair Display', ui-serif, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 		monospace;
@@ -171,8 +171,8 @@
 }
 
 @font-face {
-	font-family: 'Spectral';
-	src: local('Spectral'), url('/Spectral-ExtraBold.ttf');
+	font-family: 'Playfair Display';
+	src: local('Playfair Display'), url('/PlayfairDisplay-ExtraBold.ttf');
 	font-weight: black;
 }
 
